@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1083781579807",
+    "project_id": "arpc-checklist",
+    "storage_bucket": "arpc-checklist.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083781579807:android:89bf1ce934fc583033812a",
+        "android_client_info": {
+          "package_name": "com.company.ARPC_checklist"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC14Dnwm5EK6TpqH4PnVzStfXLwINxZPWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
