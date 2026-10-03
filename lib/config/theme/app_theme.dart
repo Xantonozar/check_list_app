@@ -92,10 +92,10 @@ class AppTheme {
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.lightPrimary,
         foregroundColor: AppColors.lightOnPrimary,
-        elevation: 4,
-        focusElevation: 6,
-        hoverElevation: 6,
-        highlightElevation: 8,
+        elevation: 6,
+        focusElevation: 8,
+        hoverElevation: 8,
+        highlightElevation: 10,
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.lightOutline,
@@ -139,6 +139,14 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: AppColors.darkPrimary,
+        foregroundColor: AppColors.darkOnPrimary,
+        elevation: 6,
+        focusElevation: 8,
+        hoverElevation: 8,
+        highlightElevation: 10,
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(

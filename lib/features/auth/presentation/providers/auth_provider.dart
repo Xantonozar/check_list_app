@@ -2,13 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/models/user_model.dart';
+import '../../../tasks/data/task_repository.dart';
+import '../../../tasks/presentation/providers/task_provider.dart';
 import '../../data/auth_repository.dart';
 import '../../domain/auth_state.dart';
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _repository;
+  final TaskRepository _taskRepository;
 
-  AuthNotifier(this._repository) : super(const AuthState()) {
+  AuthNotifier(this._repository, this._taskRepository) : super(const AuthState()) {
     _listenToAuthChanges();
   }
 
@@ -32,6 +35,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     try {
       final user = await _repository.signInWithEmailAndPassword(email, password);
+      await _ensureMandatoryTasks(user.uid);
       state = AuthState(status: AuthStatus.authenticated, user: user);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
@@ -58,6 +62,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         email,
         password,
       );
+      await _ensureMandatoryTasks(user.uid);
       state = AuthState(status: AuthStatus.authenticated, user: user);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
@@ -109,6 +114,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> _ensureMandatoryTasks(String userId) async {
+    final hasTasks = await _taskRepository.hasTasks(userId);
+    if (!hasTasks) {
+      await _taskRepository.seedMandatoryTasks(userId);
+    }
+  }
+
   UserModel _userFromFirebaseUser(User user) {
     return UserModel(
       uid: user.uid,
@@ -126,5 +138,6 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final repository = ref.watch(authRepositoryProvider);
-  return AuthNotifier(repository);
+  final taskRepository = ref.watch(taskRepositoryProvider);
+  return AuthNotifier(repository, taskRepository);
 });

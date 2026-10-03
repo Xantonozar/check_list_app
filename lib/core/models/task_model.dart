@@ -9,6 +9,7 @@ class TaskModel {
   final String? hadithRef;
   final String? quranRef;
   final DateTime createdAt;
+  final int sortOrder;
 
   const TaskModel({
     required this.id,
@@ -19,6 +20,7 @@ class TaskModel {
     this.hadithRef,
     this.quranRef,
     required this.createdAt,
+    this.sortOrder = 0,
   });
 
   TaskModel copyWith({
@@ -53,6 +55,7 @@ class TaskModel {
       'hadithRef': hadithRef,
       'quranRef': quranRef,
       'createdAt': createdAt.millisecondsSinceEpoch,
+      'sortOrder': sortOrder,
     };
   }
 
@@ -66,6 +69,7 @@ class TaskModel {
       hadithRef: map['hadithRef'] as String?,
       quranRef: map['quranRef'] as String?,
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+      sortOrder: map['sortOrder'] as int? ?? 0,
     );
   }
 
