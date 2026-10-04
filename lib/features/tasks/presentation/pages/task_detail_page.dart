@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/enums/task_priority.dart';
 import '../../../../core/models/task_model.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/task_provider.dart';
+import '../providers/daily_record_provider.dart';
 
 class TaskDetailPage extends ConsumerStatefulWidget {
   final String taskId;
@@ -36,7 +38,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
       );
     }
 
-    final isCompleted = ref.read(taskProvider(userId).notifier).isTaskCompleted(widget.taskId);
+    final isCompleted = ref.read(dailyRecordProvider(userId).notifier).isTaskCompleted(widget.taskId);
 
     return Scaffold(
       appBar: AppBar(
@@ -121,8 +123,8 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
               child: SwitchListTile(
                 title: const Text('সম্পন্ন হয়েছে'),
                 value: isCompleted,
-                onChanged: (value) {
-                  ref.read(taskProvider(userId).notifier).toggleTaskCompletion(widget.taskId);
+                onChanged: (value) async {
+                  await ref.read(dailyRecordProvider(userId).notifier).toggleTask(widget.taskId, taskState.tasks);
                 },
               ),
             ),

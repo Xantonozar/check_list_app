@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../config/constants/app_strings.dart';
 import '../../../../core/models/task_model.dart';
-import '../../../../core/utils/score_calculator.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/task_provider.dart';
+import '../providers/daily_record_provider.dart';
 
 class AllTasksPage extends ConsumerStatefulWidget {
   const AllTasksPage({super.key});
@@ -23,16 +23,12 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
     final authState = ref.watch(authProvider);
     final userId = authState.user?.uid ?? '';
     final taskState = ref.watch(taskProvider(userId));
+    final dailyRecordState = ref.watch(dailyRecordProvider(userId));
+    final dailyRecordNotifier = ref.read(dailyRecordProvider(userId).notifier);
     final theme = Theme.of(context);
 
     final today = DateFormat('d MMMM, yyyy', 'bn').format(DateTime.now());
-    final taskNotifier = ref.read(taskProvider(userId).notifier);
-    final progress = taskState.tasks.isEmpty
-        ? 0.0
-        : ScoreCalculator.calculateScore(taskState.tasks, {
-            for (final task in taskState.tasks)
-              task.id: taskNotifier.isTaskCompleted(task.id),
-          });
+    final progress = dailyRecordState.record?.score ?? 0.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -71,15 +67,16 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
                       context,
                       'বাধ্যতামূলক',
                       taskState.mandatoryTasks,
-                      taskNotifier,
+                      dailyRecordNotifier,
+                      taskState.tasks,
                       isMandatory: true,
                     ),
                   if (taskState.highTasks.isNotEmpty)
-                    _buildSection(context, 'উচ্চ', taskState.highTasks, taskNotifier),
+                    _buildSection(context, 'উচ্চ', taskState.highTasks, dailyRecordNotifier, taskState.tasks),
                   if (taskState.mediumTasks.isNotEmpty)
-                    _buildSection(context, 'মাঝারি', taskState.mediumTasks, taskNotifier),
+                    _buildSection(context, 'মাঝারি', taskState.mediumTasks, dailyRecordNotifier, taskState.tasks),
                   if (taskState.lowTasks.isNotEmpty)
-                    _buildSection(context, 'নিম্ন', taskState.lowTasks, taskNotifier),
+                    _buildSection(context, 'নিম্ন', taskState.lowTasks, dailyRecordNotifier, taskState.tasks),
                   if (taskState.tasks.isEmpty)
                     Center(
                       child: Padding(
@@ -175,7 +172,8 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
     BuildContext context,
     String title,
     List<TaskModel> tasks,
-    TaskNotifier taskNotifier, {
+    DailyRecordNotifier dailyRecordNotifier,
+    List<TaskModel> allTasks, {
     bool isMandatory = false,
   }) {
     final theme = Theme.of(context);
@@ -200,12 +198,12 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
         Card(
           child: Column(
             children: tasks.map((task) {
-              final isCompleted = taskNotifier.isTaskCompleted(task.id);
+              final isCompleted = dailyRecordNotifier.isTaskCompleted(task.id);
               return ListTile(
                 leading: Checkbox(
                   value: isCompleted,
-                  onChanged: (value) {
-                    taskNotifier.toggleTaskCompletion(task.id);
+                  onChanged: (value) async {
+                    await dailyRecordNotifier.toggleTask(task.id, allTasks);
                   },
                 ),
                 title: AnimatedOpacity(
