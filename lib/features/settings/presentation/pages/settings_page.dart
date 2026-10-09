@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../config/constants/app_strings.dart';
 import '../../../../config/theme/theme_provider.dart';
+import '../../../../core/widgets/glassmorphic_card.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../providers/notification_provider.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -12,6 +14,8 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final settings = ref.watch(notificationSettingsNotifierProvider);
+    final notifNotifier = ref.read(notificationSettingsNotifierProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -21,26 +25,109 @@ class SettingsPage extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Card(
-            child: ListTile(
-              leading: Icon(
-                theme.brightness == Brightness.dark
-                    ? Icons.light_mode
-                    : Icons.dark_mode,
-              ),
-              title: const Text('থিম'),
-              subtitle: Text(
-                theme.brightness == Brightness.dark ? 'ডার্ক মোড' : 'লাইট মোড',
-              ),
-              trailing: Switch(
-                value: theme.brightness == Brightness.dark,
-                onChanged: (_) =>
-                    ref.read(themeProvider.notifier).toggleTheme(),
-              ),
+          GlassmorphicCard(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(
+                    theme.brightness == Brightness.dark
+                        ? Icons.light_mode
+                        : Icons.dark_mode,
+                  ),
+                  title: const Text('থিম'),
+                  subtitle: Text(
+                    theme.brightness == Brightness.dark ? 'ডার্ক মোড' : 'লাইট মোড',
+                  ),
+                  trailing: Switch(
+                    value: theme.brightness == Brightness.dark,
+                    onChanged: (_) =>
+                        ref.read(themeProvider.notifier).toggleTheme(),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
-          Card(
+          const SizedBox(height: 16),
+          GlassmorphicCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: Text(
+                    AppStrings.notifications,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                _buildNotificationTile(
+                  context,
+                  icon: Icons.wb_twilight,
+                  title: AppStrings.fajrNotification,
+                  value: settings.fajr,
+                  onChanged: (_) => notifNotifier.toggle('fajr'),
+                ),
+                _buildNotificationTile(
+                  context,
+                  icon: Icons.wb_sunny,
+                  title: AppStrings.dhuhrNotification,
+                  value: settings.dhuhr,
+                  onChanged: (_) => notifNotifier.toggle('dhuhr'),
+                ),
+                _buildNotificationTile(
+                  context,
+                  icon: Icons.cloud,
+                  title: AppStrings.asrNotification,
+                  value: settings.asr,
+                  onChanged: (_) => notifNotifier.toggle('asr'),
+                ),
+                _buildNotificationTile(
+                  context,
+                  icon: Icons.wb_twilight,
+                  title: AppStrings.maghribNotification,
+                  value: settings.maghrib,
+                  onChanged: (_) => notifNotifier.toggle('maghrib'),
+                ),
+                _buildNotificationTile(
+                  context,
+                  icon: Icons.nightlight,
+                  title: AppStrings.ishaNotification,
+                  value: settings.isha,
+                  onChanged: (_) => notifNotifier.toggle('isha'),
+                ),
+                _buildNotificationTile(
+                  context,
+                  icon: Icons.book,
+                  title: AppStrings.nightDhikrNotification,
+                  value: settings.nightDhikr,
+                  onChanged: (_) => notifNotifier.toggle('nightDhikr'),
+                ),
+                if (settings.nightDhikr)
+                  ListTile(
+                    leading: const Icon(Icons.access_time),
+                    title: const Text(AppStrings.nightDhikrTime),
+                    trailing: Text(
+                      settings.nightDhikrTime,
+                      style: theme.textTheme.bodyLarge,
+                    ),
+                    onTap: () async {
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime: _parseTime(settings.nightDhikrTime),
+                      );
+                      if (time != null) {
+                        final formatted =
+                            '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+                        await notifNotifier.setNightDhikrTime(formatted);
+                      }
+                    },
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          GlassmorphicCard(
             child: ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text(
@@ -79,6 +166,29 @@ class SettingsPage extends ConsumerWidget {
           if (index == 1) context.go('/reports');
         },
       ),
+    );
+  }
+
+  Widget _buildNotificationTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return SwitchListTile(
+      secondary: Icon(icon),
+      title: Text(title),
+      value: value,
+      onChanged: onChanged,
+    );
+  }
+
+  TimeOfDay _parseTime(String time) {
+    final parts = time.split(':');
+    return TimeOfDay(
+      hour: int.parse(parts[0]),
+      minute: int.parse(parts[1]),
     );
   }
 }

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1083781579807",
+    "firebase_url": "https://arpc-checklist-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "arpc-checklist",
     "storage_bucket": "arpc-checklist.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.company.ARPC_checklist"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1083781579807-kmdn8d95h3i6brqikktuk9upjqahsalr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.ARPC_checklist",
+            "certificate_hash": "913eec09588d62cf6e7766a9aa0efc7855fd67c7"
+          }
+        },
+        {
+          "client_id": "1083781579807-7qlq6rd1vm35e1lnrfu2tt7elbkr1fp3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC14Dnwm5EK6TpqH4PnVzStfXLwINxZPWY"
@@ -20,7 +34,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1083781579807-7qlq6rd1vm35e1lnrfu2tt7elbkr1fp3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1083781579807-l3to0d6d8cvca15gc4an73bkvp0c8c48.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.company.ARPC-checklist"
+              }
+            }
+          ]
         }
       }
     }

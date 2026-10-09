@@ -34,12 +34,6 @@ class _AllTasksPageState extends ConsumerState<AllTasksPage> {
       appBar: AppBar(
         title: const Text(AppStrings.appName),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: taskState.isLoading
           ? const Center(child: CircularProgressIndicator())

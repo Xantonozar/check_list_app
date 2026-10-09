@@ -51,10 +51,24 @@ class AppStrings {
   static const String worstDay = 'খারাপ দিন';
   static const String downloadSheet = 'গুগল শিটে এক্সপোর্ট';
 
+  // Notifications
+  static const String notifications = 'নোটিফিকেশন';
+  static const String fajrNotification = 'ফজরের সালাত';
+  static const String dhuhrNotification = 'যোহরের সालাত';
+  static const String asrNotification = 'আসরের সালাত';
+  static const String maghribNotification = 'মাগরিবের সালাত';
+  static const String ishaNotification = 'ইশার সালাত';
+  static const String nightDhikrNotification = 'ঘুমের আগে যিকির';
+  static const String nightDhikrTime = 'ঘুমের আগে যিকিরের সময়';
+  static const String notificationPermissionTitle = 'নোটিফিকেশন অনুমতি';
+  static const String notificationPermissionBody =
+      'নোটিফিকেশন পেতে অনুমতি দিন';
+  static const String openSettings = 'সেটিংস খুলুন';
+
   // Misc
   static const String loading = 'লোড হচ্ছে...';
   static const String error = 'ত্রুটি';
-  static const String retry = 'পুনরায় চেষ্টা';
+  static const String retry = 'পুনরায় চেष্টা';
   static const String noTasks = 'কোনো টাস্ক নেই';
   static const String progress = 'অগ্রগতি';
   static const String today = 'আজ';
